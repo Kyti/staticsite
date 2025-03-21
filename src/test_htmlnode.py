@@ -89,5 +89,6 @@ class TestHTMLNode(unittest.TestCase):
             node.to_html()
         self.assertTrue("invalid HTML: no children" in str(context.exception))
 
+
 if __name__ == "__main__":
     unittest.main()
