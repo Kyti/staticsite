@@ -80,6 +80,47 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             new_nodes,
         )
 
+    def test_split_nodes_link_no_links(self):
+        node = TextNode("This is text with no links", TextType.TEXT)
+        new_nodes = split_nodes_link([node])
+        # It should return the original node if no links are found
+        assert new_nodes == [node]
+
+
+    def test_split_nodes_image_no_images(self):
+        node = TextNode("This is text with no images", TextType.TEXT)
+        new_nodes = split_nodes_link([node])
+        assert new_nodes == [node]
+
+    def test_split_links(self):
+        node = TextNode(
+            "This is text with a link [to youtube](https://www.youtube.com)", TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a link ", TextType.TEXT),
+                TextNode("to youtube", TextType.LINK, "https://www.youtube.com"),
+            ],
+            new_nodes,
+        )
+
+    
+    def test_split_image_and_link(self):
+        node = TextNode(
+            "This contains an image ![image](https://i.imgur.com/zjjcJKZ.png) and a link [to github](https://github.com)", TextType.TEXT
+            )
+        new_nodes = split_nodes_link(split_nodes_image([node]))
+        self.assertListEqual(
+            [
+                TextNode("This contains an image ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and a link ", TextType.TEXT),
+                TextNode("to github", TextType.LINK, "https://github.com"),
+            ],
+            new_nodes,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
