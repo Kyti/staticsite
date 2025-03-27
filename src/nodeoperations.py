@@ -42,39 +42,45 @@ def split_nodes_image(old_nodes):
             continue
     
         remaining_text = old_node.text
-        print(f"remaining_text: {remaining_text}\n")
-        markdown_image = extract_markdown_images(remaining_text)
-        print(f"markdown_image: {markdown_image}\n")
-        sections = []
-        image_alt, image_link = "", ""
 
-        if not markdown_image:
-            if not remaining_text:
-                return
-            new_nodes.append(TextNode(remaining_text, TextType.TEXT))
-            print(f"new_nodes no more images: {new_nodes}\n")
+        print(f"remaining text: {remaining_text}")
+        input("Enter to continue")
+
+        if len(remaining_text) == 0:
             return
-       
+        
+        markdown_image = extract_markdown_images(remaining_text)
+
+        print(f"markdown_image: {markdown_image}")
+        input("Enter to continue")
+
+        if len(markdown_image) == 0:
+            text_node = TextNode(remaining_text, TextType.TEXT)
+            print(f"text node when no markdown_image: {text_node}")
+            new_nodes.append(text_node)
+            print(f"new nodes: {new_nodes}")
+            input("Enter to continue")
+            return
+
         for alt, link in markdown_image:
-            image_alt, image_link = alt, link
-            print(f"image_alt: {image_alt}\nimage_link: {image_link}\n")
-            current_section = remaining_text.split(f"![{image_alt}]({image_link})", 1)
-            print(f"current_section: {current_section}\n")
+            image_alt = alt
+            image_link = link
 
-            text_type_node = TextNode(current_section[0], TextType.TEXT)
-            print(f"text_type_node: {text_type_node}\n")
-            new_nodes.append(text_type_node)
-            print(f"new_nodes w/text_type_node: {new_nodes}\n")
-            image_type_node = TextNode(image_alt, TextType.IMAGE, image_link)
-            print(f"image_type_node: {image_type_node}\n")
-            new_nodes.append(image_type_node)
-            print(f"new_nodes w/image_type_node: {new_nodes}\n")
-            sections.append(current_section)
-            print(f"sections: {sections}\n")
-            remaining_text = ''.join(current_section[2:])
-            print(f"remaining_text: {remaining_text}\n")
+            sections = remaining_text.split(f"![{image_alt}]({image_link})")
+            print(f"sections: {sections}")
 
-    
+            text_node = TextNode(sections[0], TextType.TEXT)
+            print(f"text node: {text_node}")
+            new_nodes.append(text_node)
+
+            image_node = TextNode(image_alt, TextType.IMAGE, image_link)
+            print(f"image node: {image_node}")
+            new_nodes.append(image_node)
+
+            remaining_text = "".join(sections[1:])
+            print(f"remaining text from sections: {remaining_text}")
+            input("Enter to continue")
+
     return new_nodes
 
 def split_nodes_link(old_nodes):
@@ -83,7 +89,11 @@ def split_nodes_link(old_nodes):
 
 
 node = TextNode("This is text with an image ![alt](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)", TextType.TEXT,)
-result = extract_markdown_images(node.text)
-result2 = split_nodes_image([node])
+result = split_nodes_image([node])
 
-print(result, result2)
+print(f"1st go:\n{result}")
+
+node = TextNode("", TextType.TEXT,)
+result = split_nodes_image([node])
+
+print(f"2nd go:\n{result}")
