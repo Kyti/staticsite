@@ -1,5 +1,5 @@
 import unittest
-from nodeoperations import split_nodes_delimiter, split_nodes_image, split_nodes_link
+from nodeoperations import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_text_nodes, markdown_to_blocks
 from textnode import TextType, TextNode
 
 
@@ -119,6 +119,120 @@ class TestSplitNodesDelimiter(unittest.TestCase):
                 TextNode("to github", TextType.LINK, "https://github.com"),
             ],
             new_nodes,
+        )
+
+
+    def test_text_to_text_nodes(self):
+        self.maxDiff = None
+        nodes = [
+            TextNode("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)", TextType.TEXT),
+            TextNode("Here is a **bold** word, an _italic_ one, a `code` block, and an ![image](url) with a [link](url).", TextType.TEXT),
+        ]
+        result = text_to_text_nodes(nodes)
+
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+                TextNode("Here is a ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" word, an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" one, a ", TextType.TEXT),
+                TextNode("code", TextType.CODE),
+                TextNode(" block, and an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "url"),
+                TextNode(" with a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "url"),
+                TextNode(".", TextType.TEXT),
+            ], result
+        )
+
+    
+    def test_markdown_to_blocks(self):
+        self.maxDiff = None
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+    def test_markdown_to_blocks_extra_blanks(self):
+        self.maxDiff = None
+        md = """
+This is a block
+
+
+with extra blank lines
+
+
+
+to see if they are properly removed
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is a block",
+                "with extra blank lines",
+                "to see if they are properly removed"
+                ],
+        )
+
+    def test_markdown_to_blocks_with_complex_nesting(self):
+        md = """
+# Heading with **bold**
+
+Paragraph with
+multiple lines
+and _formatting_
+
+- List item 1
+- List item 2
+
+> A blockquote
+> with multiple lines
+
+   
+
+Code block:
+```python
+def hello():
+    print("world")
+```
+"""
+        blocks = markdown_to_blocks(md)
+
+        self.assertEqual(
+            blocks,
+            [
+    "# Heading with **bold**",
+    "Paragraph with\nmultiple lines\nand _formatting_",
+    "- List item 1\n- List item 2",
+    "> A blockquote\n> with multiple lines",
+    "Code block:\n```python\ndef hello():\n    print(\"world\")\n```"
+],
         )
 
 

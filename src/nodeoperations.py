@@ -101,3 +101,37 @@ def split_nodes_link(old_nodes):
 
 
     return new_nodes
+
+
+def text_to_text_nodes(old_nodes):
+    nodes_after_images = split_nodes_image(old_nodes)
+    current_nodes = split_nodes_link(nodes_after_images)
+    # print(f"current nodes before delimiters:\n{current_nodes}\n")
+    
+    delimiters = [
+        ("**", TextType.BOLD),
+        ("_", TextType.ITALIC),
+        ("`", TextType.CODE),
+    ]
+
+    for delimiter, text_type in delimiters:
+        current_nodes = split_nodes_delimiter(current_nodes, delimiter, text_type)
+        # print(f"delimiter: {delimiter}, current nodes after checking delimiter: {current_nodes}\n")
+
+
+    return current_nodes
+
+
+def markdown_to_blocks(markdown):
+    blocks = markdown.split("\n\n")
+    stripped_blocks = []
+
+    for block in blocks:
+        stripped = block.strip()
+        if len(stripped) > 0:
+            stripped_blocks.append(stripped)
+        else:
+            continue
+
+
+    return stripped_blocks
