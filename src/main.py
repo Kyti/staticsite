@@ -2,7 +2,7 @@ from textnode import *
 import os
 import shutil
 import logging
-from create_pages import generate_page
+from create_pages import generate_page, generate_multiple_pages
 
     
 def copy_static_to_public(source_dir, dest_dir):
@@ -59,11 +59,7 @@ def main():
     copy_static_to_public(source_dir, destination_dir)
     print(f"Static content copied from {source_dir} to {destination_dir}.")
     
-    from_path = "content/index.md"
-    template_path = "template.html"
-    dest_path = "public/index.html"
-
-    generate_page(from_path, template_path, dest_path)
+    generate_multiple_pages('content', 'template.html', 'public')
 
 
 

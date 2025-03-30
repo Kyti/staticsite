@@ -1,4 +1,4 @@
-import re
+import os
 from htmlnode import ParentNode
 from nodeoperations import text_to_text_nodes, markdown_to_blocks
 from textnode import TextNode, TextType, text_node_to_html_node
@@ -8,6 +8,7 @@ def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
     children = []
     for block in blocks:
+        block_type = block_to_block_type(block)
         html_node = block_to_html_node(block)
         children.append(html_node)
     return ParentNode("div", children, None)

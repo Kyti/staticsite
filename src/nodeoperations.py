@@ -22,7 +22,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
             if second_pos == -1:
                 raise Exception("Invalid markdown: missing closing delimiter")
                 
-            if first_pos > 0:
+            if first_pos >= 0:
                 new_nodes.append(TextNode(remaining_text[:first_pos], TextType.TEXT))
 
                 text_between = remaining_text[first_pos + len(delimiter):second_pos]
