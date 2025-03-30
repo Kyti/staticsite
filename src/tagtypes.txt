@@ -1,0 +1,13 @@
+html = <div></div>
+paragraph = <p></p>
+heading = <h1>-<h6></h1>-</h6>'
+code block = <pre><code></code></pre>
+quote block = <blockquote></blockquote>
+unordered list = <ul><li></li></ul>
+ordered list = <ol><li></li></ol>
+
+bold = <b></b>
+italic = <i></i>
+code = <code></code>
+link = <a href="url"></a>
+image = <img src="image url" alt="alt text">
