@@ -2,7 +2,8 @@ from textnode import *
 import os
 import shutil
 import logging
-from create_pages import generate_page, generate_multiple_pages
+import sys
+from create_pages import generate_pages_recursive
 
     
 def copy_static_to_public(source_dir, dest_dir):
@@ -52,15 +53,21 @@ def copy_static_to_public(source_dir, dest_dir):
 
     recursive_copy(source_dir, dest_dir)
 
+
+if len(sys.argv) > 1:
+    basepath = sys.argv[1]
+else:
+    basepath = "/"
+
+
 def main():
     source_dir = "static"
-    destination_dir = "public"
+    destination_dir = "docs"
 
     copy_static_to_public(source_dir, destination_dir)
     print(f"Static content copied from {source_dir} to {destination_dir}.")
     
-    generate_multiple_pages('content', 'template.html', 'public')
-
+    generate_pages_recursive('content', 'template.html', 'docs', basepath)
 
 
 if __name__ == "__main__":

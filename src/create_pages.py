@@ -9,7 +9,7 @@ def extract_title(markdown):
     else:
         raise Exception("No h1 header")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     
     try:
@@ -56,6 +56,9 @@ def generate_page(from_path, template_path, dest_path):
         print(f"Error replacing placeholders: {e}")
         return
     
+    new_page = new_page.replace('href="/', f'href="{basepath}')
+    new_page = new_page.replace('href="/,', f'href="{basepath}')
+
     try:
         start_time = time.time()
         dest_dir = os.path.dirname(dest_path)
@@ -80,7 +83,7 @@ def generate_page(from_path, template_path, dest_path):
 
     print(f"Page successfully generated at {dest_path}!")
 
-def generate_multiple_pages(content_dir, template_path, public_dir):
+def generate_pages_recursive(content_dir, template_path, public_dir, basepath):
     for root, dirs, files in os.walk(content_dir):
         for file in files:
             if file.endswith(".md"):
@@ -92,5 +95,5 @@ def generate_multiple_pages(content_dir, template_path, public_dir):
                 if not os.path.exists(dest_dir):
                     os.makedirs(dest_dir)
                 
-                generate_page(from_path, template_path, dest_path)
+                generate_page(from_path, template_path, dest_path, basepath)
                 print(f"Generated page for {relative_path}")
